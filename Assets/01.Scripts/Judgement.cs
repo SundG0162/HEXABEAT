@@ -15,6 +15,6 @@ public class Judgement : MonoSingleton<Judgement>
     {
         float judgeTime;
         if (NoteManager.Instance.notes[trackNum].Count <= 0) return;
-        judgeTime = currentTime - NoteManager.Instance.notes[trackNum].Peek().arriveTime;
+        judgeTime = Mathf.Abs(NoteManager.Instance.notes[trackNum].Peek().arriveTime - currentTime);
     }
 }
