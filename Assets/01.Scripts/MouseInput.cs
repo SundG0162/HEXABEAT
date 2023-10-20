@@ -7,7 +7,9 @@ public class MouseInput : MonoBehaviour
     private GameObject _oppositeTarget = null;
     private GameObject _currentTarget = null;
     public GameObject[] mouseInputs;
+    [SerializeField]
     private int _currentIndex = 0;
+    [SerializeField]
     private int _oppositeIndex = 0;
 
     [SerializeField]
@@ -68,10 +70,14 @@ public class MouseInput : MonoBehaviour
     private void LeftClick()
     {
         var spriteRenderer = _currentTarget.transform.Find("Glow").GetComponent<SpriteRenderer>();
+        if(Input.GetMouseButtonDown(0)) 
+        {
+            Judgement.Instance.Judge(_currentIndex);
+        }
         if (Input.GetMouseButton(0))
         {
-            //Judgement.Instance.Judge(_currentIndex);
             spriteRenderer.color = Color.blue;
+            Judgement.Instance.CheckContinousNote(_currentIndex);
         }
         if (Input.GetMouseButtonUp(0))
         {
@@ -82,10 +88,14 @@ public class MouseInput : MonoBehaviour
     private void RightClick()
     {
         var spriteRenderer = _oppositeTarget.transform.Find("Glow").GetComponent<SpriteRenderer>();
+        if(Input.GetMouseButtonDown(1)) 
+        {
+            Judgement.Instance.Judge(_oppositeIndex);
+        }
         if (Input.GetMouseButton(1))
         {
-            //Judgement.Instance.Judge(_oppositeIndex);
             spriteRenderer.color = Color.blue;
+            Judgement.Instance.CheckContinousNote(_oppositeIndex);
         }
         if (Input.GetMouseButtonUp(1))
         {
