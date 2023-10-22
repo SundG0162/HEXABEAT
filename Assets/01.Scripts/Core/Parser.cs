@@ -14,13 +14,22 @@ public class Parser : MonoSingleton<Parser>
         int j = 0;
         sheet = new Sheet();
         string str = null;
-        using (StreamReader sr = new StreamReader(@"D:\test.txt"))
+        using (StreamReader sr = new StreamReader(@"D:\FirstSheet.txt"))
         {
             while ((str = sr.ReadLine()) != null)
             {
                 if (string.IsNullOrEmpty(str))
                     break;
-
+                if (str.StartsWith("QuaterNoteMs"))
+                {
+                    sheet.quaterNoteMs = int.Parse(str.Split()[1].Trim());
+                    continue;
+                }
+                if(str.StartsWith("FirstNoteMs"))
+                {
+                    sheet.firstNoteMs = int.Parse(str.Split()[1].Trim());
+                    continue;
+                }    
                 string[] s = str.Split(' ');
                 if (s.Length == 1)
                 {

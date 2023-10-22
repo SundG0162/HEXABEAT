@@ -32,28 +32,12 @@ public class Sheet
     public string title;
     public string artist;
 
-    public int bpm;
-    public int offset;
     public int quaterNoteMs;
+    public int firstNoteMs;
     public int[] signature; // ¹ÚÀÚ ex) 3/4, 4/4, 6/8
 
     public List<Note> notes = new List<Note>();
 
     public AudioClip audio;
     public Sprite image;
-
-    public float BarPerSec { get; set; }
-    public float BeatPerSec { get; set; }
-
-    public int BarPerMilliSec { get; set; }
-    public int BeatPerMilliSec { get; set; }
-
-    public void Init()
-    {
-        BarPerMilliSec = (int)(signature[0] / (bpm/60) * 1000);
-        BeatPerMilliSec = BarPerMilliSec / 64;
-
-        BarPerSec = BarPerMilliSec * 0.001f;
-        BeatPerSec = BarPerSec / 64f;
-    }
 }

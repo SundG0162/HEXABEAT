@@ -111,8 +111,11 @@ public class Judgement : MonoSingleton<Judgement>
     private void Update()
     {
         countTime += Time.deltaTime;
-        if (countTime >= (18.01f - 1.75f) / NoteGenerate.Instance.speed)
+        if (countTime >= (18.01f - 1.75f) / NoteGenerate.Instance.speed && !isSongStart)
+        {
             isSongStart = true;
+            AudioManager.Instance.Play();
+        }
         if (!isSongStart) return;
         currentTime += Mathf.FloorToInt(Time.deltaTime * 1000 + prevDelta);
         prevDelta = (Time.deltaTime * 1000 + prevDelta) % 1;
