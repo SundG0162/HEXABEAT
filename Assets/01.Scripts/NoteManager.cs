@@ -19,7 +19,8 @@ public class NoteManager : MonoSingleton<NoteManager>
     Queue<Note> note6 = new Queue<Note>();
     public GameObject particle;
 
-    public Dictionary<Note, GameObject> noteDictionary = new Dictionary<Note, GameObject>();
+    public List<Note> keyList = new List<Note>();
+    public List<GameObject> valueList = new List<GameObject>();
 
     private void Awake()
     {
@@ -44,11 +45,13 @@ public class NoteManager : MonoSingleton<NoteManager>
 
     public void AddDictionary(Note note, GameObject obj)
     {
-        noteDictionary.Add(note, obj);
+        keyList.Add(note);
+        valueList.Add(obj);
     }
 
     public void RemoveDictionary(Note note)
     {
-        noteDictionary.Remove(note);
+        valueList.RemoveAt(keyList.IndexOf(note));
+        keyList.Remove(note);
     }
 }

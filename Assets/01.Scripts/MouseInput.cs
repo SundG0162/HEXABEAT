@@ -82,6 +82,7 @@ public class MouseInput : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             spriteRenderer.color = Color.white;
+            Judgement.Instance.CheckLongNote(_currentIndex);
         }
     }
 
@@ -100,6 +101,7 @@ public class MouseInput : MonoBehaviour
         if (Input.GetMouseButtonUp(1))
         {
             spriteRenderer.color = Color.white;
+            Judgement.Instance.CheckLongNote(_oppositeIndex);
         }
     }
 }

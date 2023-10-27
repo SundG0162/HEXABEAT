@@ -1,11 +1,12 @@
 using System;
-using System.Collections;using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NoteGenerate : MonoSingleton<NoteGenerate>
 {
-
+    public Material lineMat;
     public GameObject notePrefab;
 
     public Transform[] noteSpawnPos;
@@ -38,25 +39,33 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
 
     public void Gen(Sheet sheet)
     {
-        for(int i = 0; i < sheet.notes.Count; i++) 
+        StartCoroutine(IEGen(sheet));
+    }
+
+    IEnumerator IEGen(Sheet sheet)
+    {
+        if(AudioManager.Instance.offset >= 0)
+            yield return new WaitForSeconds(AudioManager.Instance.offset * 0.001f);
+        for (int i = 0; i < sheet.notes.Count; i++)
         {
             switch (sheet.notes[i].noteType)
             {
                 case NoteType.Short:
-                    D_SHORTNOTEGENERATE(sheet.notes[i].lineIndex, sheet.notes[i].reachTime);
+                    ShortNoteGenerate(sheet.notes[i].lineIndex, sheet.notes[i].reachTime);
                     break;
                 case NoteType.Countinous:
-                    D_CONTINUENOTEGENERATE(sheet.notes[i].lineIndex, sheet.notes[i].reachTime);
+                    ContinuousNoteGenerate(sheet.notes[i].lineIndex, sheet.notes[i].reachTime);
                     break;
-                case NoteType.Long:
+                case NoteType.LongHead:
+                    LongNoteGenerate(sheet.notes[i].lineIndex, sheet.notes[i].reachTime, sheet.notes[i].tail);
                     break;
             }
         }
     }
 
-    private void D_SHORTNOTEGENERATE(int index, int reachTime)
+    private void ShortNoteGenerate(int index, int reachTime)
     {
-        NoteObject note = PoolManager.Get(notePrefab, noteSpawnPos[index]).AddComponent<NoteShort>();
+        NoteObject note = Instantiate(notePrefab, noteSpawnPos[index]).AddComponent<NoteShort>();
         note.transform.localPosition = Vector2.zero;
         note.transform.localRotation = Quaternion.identity;
         note.note.lineIndex = index;
@@ -67,9 +76,9 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
         NoteManager.Instance.EnqueueNote(index, note.note);
     }
 
-    private void D_CONTINUENOTEGENERATE(int index, int reachTime)
+    private void ContinuousNoteGenerate(int index, int reachTime)
     {
-        NoteObject note = PoolManager.Get(notePrefab, noteSpawnPos[index]).AddComponent<NoteContinuous>();
+        NoteObject note = Instantiate(notePrefab, noteSpawnPos[index]).AddComponent<NoteContinuous>();
         note.transform.localPosition = Vector2.zero;
         note.transform.localRotation = Quaternion.identity;
         note.note.lineIndex = index;
@@ -80,32 +89,32 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
         NoteManager.Instance.EnqueueNote(index, note.note);
     }
 
-    private void D_LONGNOTEGENERATE(int index)
+    private void LongNoteGenerate(int index, int reachTime, int tail)
     {
-        GameObject note = new GameObject("NoteLong");
-        note.transform.position = noteSpawnPos[index].position;
-
-        GameObject head = PoolManager.Get(notePrefab, noteSpawnPos[index]);
-        head.name = "head";
-        head.transform.parent = note.transform;
-
-        GameObject tail = PoolManager.Get(notePrefab, noteSpawnPos[index]);
-        tail.transform.parent = note.transform;
-        tail.name = "tail";
-
-        GameObject line = new GameObject("line");
-        line.transform.parent = note.transform;
-        line.transform.position = noteSpawnPos[index].position;
-
-        line.AddComponent<LineRenderer>();
-        LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
-        lineRenderer.sortingOrder = 3;
-        lineRenderer.widthMultiplier = 0.8f;
-        lineRenderer.positionCount = 2;
-        lineRenderer.useWorldSpace = false;
-        note.AddComponent<NoteLong>().Move();
-        note.GetComponent<NoteLong>().note.noteType = NoteType.Long;
-        NoteManager.Instance.AddDictionary(note.GetComponent<NoteLong>().note, note);
-        NoteManager.Instance.EnqueueNote(index, note.GetComponent<NoteLong>().note);
+        GameObject longNote = new GameObject("Note");
+        longNote.transform.SetParent(noteSpawnPos[index]);
+        for (int i = 0; i < 2; i++)
+        {
+            NoteObject note = null;
+            if (i == 0)
+            {
+                note = Instantiate(notePrefab, noteSpawnPos[index]).AddComponent<NoteLongHead>();
+                note.note.reachTime = reachTime;
+                note.note.noteType = NoteType.LongHead;
+            }
+            else
+            {
+                note = Instantiate(notePrefab, noteSpawnPos[index]).AddComponent<NoteLongTail>();
+                note.note.reachTime = tail;
+                note.note.noteType = NoteType.LongTail;
+            }
+            note.transform.localPosition = Vector2.zero;
+            note.transform.localRotation = Quaternion.identity;
+            note.note.lineIndex = index;
+            note.Move();
+            note.transform.SetParent(longNote.transform);
+            NoteManager.Instance.AddDictionary(note.note, note.gameObject);
+            NoteManager.Instance.EnqueueNote(index, note.note);
+        }
     }
 }

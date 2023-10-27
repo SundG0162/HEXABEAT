@@ -9,7 +9,8 @@ public enum NoteType
 {
     Short, // 짧은 노트
     Countinous, // 짧은 노트로 이루어져 있는 연속된 노트들 (롱노트와 비슷함)
-    Long // 긴 노트
+    LongHead, // 긴 노트
+    LongTail
 }
 
 public struct Note

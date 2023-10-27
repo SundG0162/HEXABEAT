@@ -14,7 +14,8 @@ public class Parser : MonoSingleton<Parser>
         int j = 0;
         sheet = new Sheet();
         string str = null;
-        using (StreamReader sr = new StreamReader(@"D:\FirstSheet.txt"))
+        print(Directory.GetCurrentDirectory());
+        using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + @"\Assets\99.Sheets\R.txt"))
         {
             while ((str = sr.ReadLine()) != null)
             {
@@ -40,9 +41,14 @@ public class Parser : MonoSingleton<Parser>
                 int line = int.Parse(s[1].Trim());
                 int type = int.Parse(s[2].Trim());
                 int tail = -1;
+                if (s.Length >= 4)
+                {
+                    tail = int.Parse(s[3].Trim());
+                }
                 sheet.notes.Add(new Note(line, time, (NoteType)type, tail));
                 j++;
             }
         }
+        GameManager.Instance.sheet = sheet;
     }
 }

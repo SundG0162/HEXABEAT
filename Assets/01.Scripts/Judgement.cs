@@ -19,104 +19,112 @@ public class Judgement : MonoSingleton<Judgement>
         if (NoteManager.Instance.notes[trackNum].Count <= 0) return;
         var note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
-        judgeTime = Mathf.Abs(note.reachTime - currentTime);
-        if (judgeTime > 1000)
+        judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
+        if (judgeTime > 300 && judgeTime < 400)
         {
-            Debug.Log("miss");
+            ComboManager.Instance.JudgeText("Miss");
         }
-        else if(judgeTime > 500)
+        else if (judgeTime > 200)
         {
-            Debug.Log("bad");
+            ComboManager.Instance.JudgeText("Bad");
         }
-        else if(judgeTime > 200)
+        else if (judgeTime > 125)
         {
-            Debug.Log("good");
+            ComboManager.Instance.JudgeText("Good");
         }
-        else if(judgeTime > 100)
+        else if (judgeTime > 50)
         {
-            Debug.Log("Great");
+            ComboManager.Instance.JudgeText("Great");
+
         }
-        else if(judgeTime >= 0)
+        else if (judgeTime >= 0)
         {
-            Debug.Log("Perfect");
+            ComboManager.Instance.JudgeText("Perfect");
         }
-        GameObject particle = PoolManager.Get(NoteManager.Instance.particle, NoteManager.Instance.noteDictionary[note].transform.position, Quaternion.identity);
-        if (NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.Long)
+
+        GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
+        if (NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.LongHead || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.LongTail)
         {
             NoteManager.Instance.DequeueNote(trackNum);
-            PoolManager.Release(NoteManager.Instance.noteDictionary[note]);
+            Destroy(NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)]);
             NoteManager.Instance.RemoveDictionary(note);
         }
         else
         {
-            PoolManager.Release(NoteManager.Instance.noteDictionary[note].transform.GetChild(0).gameObject);
+            NoteManager.Instance.DequeueNote(trackNum);
         }
-
     }
 
     public void CheckContinousNote(int trackNum)
     {
-        if (NoteManager.Instance.notes[trackNum].Count <= 0|| NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.Countinous) return;
+        if (NoteManager.Instance.notes[trackNum].Count <= 0 || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.Countinous) return;
         Note note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
-        judgeTime = Mathf.Abs(note.reachTime - currentTime);
-        if (judgeTime > 101) return;
-        if (judgeTime > 50)
+        judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
+        if (judgeTime > 151) return;
+        if (judgeTime > 100)
         {
-            Debug.Log("Great");
+            ComboManager.Instance.JudgeText("Great");
         }
         else if (judgeTime >= 0)
         {
-            Debug.Log("Perfect");
+            ComboManager.Instance.JudgeText("Perfect");
         }
-        GameObject particle = PoolManager.Get(NoteManager.Instance.particle, NoteManager.Instance.noteDictionary[note].transform.position, Quaternion.identity);
+        GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
         NoteManager.Instance.DequeueNote(trackNum);
-        PoolManager.Release(NoteManager.Instance.noteDictionary[note]);
+        Destroy(NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)]);
         NoteManager.Instance.RemoveDictionary(note);
     }
 
     public void CheckLongNote(int trackNum)
     {
-        if (NoteManager.Instance.notes[trackNum].Count <= 0 || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.Long) return;
+        if (NoteManager.Instance.notes[trackNum].Count <= 0 || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.LongTail) return;
         var note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
-        judgeTime = Mathf.Abs(note.reachTime - currentTime);
-        if (judgeTime > 1000)
+        judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
+        if (judgeTime > 300 && judgeTime < 400)
         {
-            Debug.Log("miss");
-        }
-        else if (judgeTime > 500)
-        {
-            Debug.Log("bad");
+            ComboManager.Instance.JudgeText("Miss");
         }
         else if (judgeTime > 200)
         {
-            Debug.Log("good");
+            ComboManager.Instance.JudgeText("Bad");
         }
-        else if (judgeTime > 100)
+        else if (judgeTime > 125)
         {
-            Debug.Log("Great");
+            ComboManager.Instance.JudgeText("Good");
+        }
+        else if (judgeTime > 50)
+        {
+            ComboManager.Instance.JudgeText("Great");
+
         }
         else if (judgeTime >= 0)
         {
-            Debug.Log("Perfect");
+            ComboManager.Instance.JudgeText("Perfect");
+
         }
-        GameObject particle = PoolManager.Get(NoteManager.Instance.particle, NoteManager.Instance.noteDictionary[note].transform.position, Quaternion.identity);
+        GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
         NoteManager.Instance.DequeueNote(trackNum);
-        PoolManager.Release(NoteManager.Instance.noteDictionary[note]);
+        Destroy(NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.parent.gameObject);
         NoteManager.Instance.RemoveDictionary(note);
     }
     private float prevDelta;
+    [SerializeField]
     private float countTime;
     private void Update()
     {
-        countTime += Time.deltaTime;
-        if (countTime >= (18.01f - 1.75f) / NoteGenerate.Instance.speed && !isSongStart)
+        if (!GameManager.Instance.isGameStart) return;
+        if (!isSongStart)
         {
-            isSongStart = true;
-            AudioManager.Instance.Play();
+            countTime += Time.deltaTime;
+            if (countTime >= (GameManager.Instance.sheet.firstNoteMs * 0.001f) + ((18.01f - 1.75f) / NoteGenerate.Instance.speed))
+            {
+                isSongStart = true;
+                AudioManager.Instance.Play();
+            }
+            return;
         }
-        if (!isSongStart) return;
         currentTime += Mathf.FloorToInt(Time.deltaTime * 1000 + prevDelta);
         prevDelta = (Time.deltaTime * 1000 + prevDelta) % 1;
     }
