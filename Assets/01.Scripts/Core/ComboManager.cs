@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-using UnityEditorInternal;
 
 public class ComboManager : MonoSingleton<ComboManager>
 {
@@ -49,5 +48,7 @@ public class ComboManager : MonoSingleton<ComboManager>
         _judgeText.text = text;
         _judgeSeq.Append(rect.DOScale(1.3f, 0.05f));
         _judgeSeq.Append(rect.DOScale(0.8f, 0.3f));
+        _judgeSeq.AppendInterval(4f);
+        _judgeSeq.Append(_judgeText.DOFade(0, 3f));
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NoteGenerate : MonoSingleton<NoteGenerate>
@@ -71,7 +70,6 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
         note.note.lineIndex = index;
         note.note.reachTime = reachTime;
         note.note.noteType = NoteType.Short;
-        note.Move();
         NoteManager.Instance.AddDictionary(note.note, note.gameObject);
         NoteManager.Instance.EnqueueNote(index, note.note);
     }
@@ -84,7 +82,6 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
         note.note.lineIndex = index;
         note.note.reachTime = reachTime;
         note.note.noteType = NoteType.Countinous;
-        note.Move();
         NoteManager.Instance.AddDictionary(note.note, note.gameObject);
         NoteManager.Instance.EnqueueNote(index, note.note);
     }
@@ -93,6 +90,7 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
     {
         GameObject longNote = new GameObject("Note");
         longNote.transform.SetParent(noteSpawnPos[index]);
+        longNote.transform.transform.localRotation = Quaternion.identity;
         for (int i = 0; i < 2; i++)
         {
             NoteObject note = null;
@@ -111,7 +109,6 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
             note.transform.localPosition = Vector2.zero;
             note.transform.localRotation = Quaternion.identity;
             note.note.lineIndex = index;
-            note.Move();
             note.transform.SetParent(longNote.transform);
             NoteManager.Instance.AddDictionary(note.note, note.gameObject);
             NoteManager.Instance.EnqueueNote(index, note.note);

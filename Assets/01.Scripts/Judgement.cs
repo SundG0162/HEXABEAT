@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Judgement : MonoSingleton<Judgement>
@@ -20,15 +18,19 @@ public class Judgement : MonoSingleton<Judgement>
         var note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
-        if (judgeTime > 300 && judgeTime < 400)
+        if(judgeTime > 200)
+        {
+            return;
+        }
+        else if (judgeTime > 150)
         {
             ComboManager.Instance.JudgeText("Miss");
         }
-        else if (judgeTime > 200)
+        else if (judgeTime > 125)
         {
             ComboManager.Instance.JudgeText("Bad");
         }
-        else if (judgeTime > 125)
+        else if (judgeTime > 100)
         {
             ComboManager.Instance.JudgeText("Good");
         }
@@ -61,10 +63,15 @@ public class Judgement : MonoSingleton<Judgement>
         Note note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
-        if (judgeTime > 151) return;
-        if (judgeTime > 100)
+        if (judgeTime > 150) return;
+        if (judgeTime > 75)
+        {
+            ComboManager.Instance.JudgeText("Good");
+        }
+        else if (judgeTime > 50)
         {
             ComboManager.Instance.JudgeText("Great");
+
         }
         else if (judgeTime >= 0)
         {
@@ -82,15 +89,15 @@ public class Judgement : MonoSingleton<Judgement>
         var note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
-        if (judgeTime > 300 && judgeTime < 400)
+        if (judgeTime > 150)
         {
             ComboManager.Instance.JudgeText("Miss");
         }
-        else if (judgeTime > 200)
+        else if (judgeTime > 125)
         {
             ComboManager.Instance.JudgeText("Bad");
         }
-        else if (judgeTime > 125)
+        else if (judgeTime > 100)
         {
             ComboManager.Instance.JudgeText("Good");
         }
@@ -102,7 +109,6 @@ public class Judgement : MonoSingleton<Judgement>
         else if (judgeTime >= 0)
         {
             ComboManager.Instance.JudgeText("Perfect");
-
         }
         GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
         NoteManager.Instance.DequeueNote(trackNum);

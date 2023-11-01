@@ -57,7 +57,6 @@ public class MouseInput : MonoBehaviour
         _oppositeTarget = mouseInputs[_oppositeIndex];
         _currentTarget.transform.Find("Glow").gameObject.SetActive(true);
         _oppositeTarget.transform.Find("Glow").gameObject.SetActive(true);
-        _oppositeTarget.transform.Find("Glow").GetComponent<SpriteRenderer>().color = Color.gray;
         if (_currentTarget != temp && temp != null)
         {
             temp.transform.Find("Glow").GetComponent<SpriteRenderer>().color = Color.white;
