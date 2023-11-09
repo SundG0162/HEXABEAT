@@ -13,6 +13,8 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
     public float speed = 13;
     public float reachTime = 0;
 
+    public bool isGenerateEnd = false;
+
 
     private void Update()
     {
@@ -60,6 +62,7 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
                     break;
             }
         }
+        isGenerateEnd = true;
     }
 
     private void ShortNoteGenerate(int index, int reachTime)

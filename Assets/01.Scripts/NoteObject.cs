@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public abstract class NoteObject : MonoBehaviour
 {
-    public bool life = false;
+    public bool start = false;
 
     public Note note = new Note();
 
@@ -27,20 +27,20 @@ public class NoteShort : NoteObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-        if (note.lineIndex.Equals(1) || note.lineIndex.Equals(4))
-        {
-            spriteRenderer.size = new Vector2((distance * 1.05f + 18.01f) / 18.01f * 11.65f, 1);
-        }
-        else
-            spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
-        DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
 
+        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
 
         transform.localPosition += new Vector3(0, distance);
     }
 
     public override void Update()
     {
+        if (!NoteGenerate.Instance.isGenerateEnd) return;
+        if (!start)
+        {
+            start = true;
+            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+        }
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -59,13 +59,8 @@ public class NoteContinuous : NoteObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-        if (note.lineIndex.Equals(1) || note.lineIndex.Equals(4))
-        {
-            spriteRenderer.size = new Vector2((distance * 1.05f + 18.01f) / 18.01f * 11.65f, 1);
-        }
-        else
-            spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
-        DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+
         spriteRenderer.color = Color.cyan;
 
         transform.localPosition += new Vector3(0, distance);
@@ -73,6 +68,13 @@ public class NoteContinuous : NoteObject
 
     public override void Update()
     {
+        if (!NoteGenerate.Instance.isGenerateEnd) return;
+        if (!start)
+        {
+            start = true;
+
+            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+        }
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -92,13 +94,8 @@ public class NoteLongHead : NoteObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-        if (note.lineIndex.Equals(1) || note.lineIndex.Equals(4))
-        {
-            spriteRenderer.size = new Vector2((distance * 1.05f + 18.01f) / 18.01f * 11.65f, 1);
-        }
-        else
-            spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
-        DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+
+        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
 
 
         transform.localPosition += new Vector3(0, distance);
@@ -106,6 +103,13 @@ public class NoteLongHead : NoteObject
 
     public override void Update()
     {
+        if (!NoteGenerate.Instance.isGenerateEnd) return;
+        if (!start)
+        {
+            start = true;
+
+            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+        }
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -125,23 +129,26 @@ public class NoteLongTail : NoteObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-        if (note.lineIndex.Equals(1) || note.lineIndex.Equals(4))
-        {
-            spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
-        }
-        else
-            spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
-        DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+
+        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+
 
 
         transform.localPosition += new Vector3(0, distance);
 
 
-        StartCoroutine(Line());
     }
 
     public override void Update()
     {
+        if (!NoteGenerate.Instance.isGenerateEnd) return;
+        if (!start)
+        {
+            start = true;
+
+            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
+            StartCoroutine(Line());
+        }
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
 
         if (spriteRenderer.size.x <= 0)
