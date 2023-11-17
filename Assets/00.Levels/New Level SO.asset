@@ -18,6 +18,5 @@ MonoBehaviour:
   combo: 1826
   totalNote: 1829
   judges: 2207000003000000000000000000000000000000
-  bgm: {fileID: 0}
+  bgm: {fileID: 8300000, guid: 9ad9dbcc91cb81246bf02c1d9cd847e6, type: 3}
   bga: {fileID: 21300000, guid: ef40ba24bc015c5499fb583cd47214fb, type: 3}
-  path: 

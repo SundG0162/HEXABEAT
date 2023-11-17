@@ -7,6 +7,8 @@ public class Judgement : MonoSingleton<Judgement>
 {
     public int currentTime = 0;
     public bool isSongStart = false;
+
+
     private void Start()
     {
         //StartCoroutine(Timer());
@@ -124,7 +126,7 @@ public class Judgement : MonoSingleton<Judgement>
         if (!isSongStart)
         {
             countTime += Time.deltaTime;
-            if (countTime >= (GameManager.Instance.sheet.firstNoteMs * 0.001f) + ((18.01f - 1.75f) / NoteGenerate.Instance.speed))
+            if (countTime >= (18.01f * 2 - 1.75f) / NoteGenerate.Instance.speed)
             {
                 isSongStart = true;
                 AudioManager.Instance.Play();

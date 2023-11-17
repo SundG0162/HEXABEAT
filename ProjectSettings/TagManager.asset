@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Button
   layers:
   - Default
   - TransparentFX
@@ -46,4 +47,7 @@ TagManager:
     locked: 0
   - name: Effect
     uniqueID: 113233159
+    locked: 0
+  - name: SettingPanel
+    uniqueID: 3473753943
     locked: 0

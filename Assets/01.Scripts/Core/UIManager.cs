@@ -1,10 +1,11 @@
 using DG.Tweening;
-using JetBrains.Annotations;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -68,6 +69,12 @@ public class UIManager : MonoSingleton<UIManager>
             _rotateIndex--;
             LevelChange(-60);
         }
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            LevelManager.Instance.levelSO = levels[_levelIndex];
+            SceneManager.LoadScene("SampleScene");
+        }
+        
     }
     private void Fade()
     {
@@ -160,14 +167,17 @@ public class UIManager : MonoSingleton<UIManager>
         {
             item.fillAmount = 0;
         }
+        if (levels[_levelIndex].totalNote == 0) return;
         _fillSeq = DOTween.Sequence();
         float amount = 0;
         int i = 0;
+        float time = 1.2f;
         foreach(var bar in _bars) 
         {
             float fill = (float)levels[_levelIndex].judges[i] / levels[_levelIndex].totalNote;
             amount += fill;
-            _fillSeq.Join(DOTween.To(() => bar.fillAmount, v => bar.fillAmount = v, amount, 1.2f));
+            _fillSeq.Join(DOTween.To(() => bar.fillAmount, v => bar.fillAmount = v, amount, time));
+            time += 0.2f;
             i++;
         }
     }

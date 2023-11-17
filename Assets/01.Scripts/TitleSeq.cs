@@ -32,7 +32,7 @@ public class TitleSeq : MonoBehaviour
 
     private void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.anyKeyDown && _titleSeq != null && _titleSeq.IsActive())
         {
             _titleSeq.Complete();
             WhiteFlash();

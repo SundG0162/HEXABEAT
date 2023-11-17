@@ -17,11 +17,6 @@ MonoBehaviour:
   score: 0
   combo: 0
   totalNote: 0
-  perfect: 0
-  great: 0
-  bad: 0
-  good: 0
-  miss: 0
-  bgm: {fileID: 0}
+  judges: 0000000000000000000000000000000000000000
+  bgm: {fileID: 8300000, guid: 9ad9dbcc91cb81246bf02c1d9cd847e6, type: 3}
   bga: {fileID: 21300000, guid: ef40ba24bc015c5499fb583cd47214fb, type: 3}
-  path: 

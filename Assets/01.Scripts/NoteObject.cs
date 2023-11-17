@@ -14,33 +14,33 @@ public abstract class NoteObject : MonoBehaviour
     public float reachTime = 0;
 
     public SpriteRenderer spriteRenderer = null;
-
-    public abstract void Start();
-    public abstract void Update();
 }
 
-public class NoteShort : NoteObject
+public interface INote
 {
+    void Init();
+    void Move();
+}
 
-    public override void Start()
+public class NoteShort : NoteObject, INote
+{
+    public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
 
-        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+        spriteRenderer.size = new Vector2(11.65f * 2, 1);
 
-        transform.localPosition += new Vector3(0, distance);
+
+        transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
-    public override void Update()
+    public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        if (!start)
-        {
-            start = true;
-            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
-        }
+        if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
+            spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -50,31 +50,39 @@ public class NoteShort : NoteObject
             Destroy(gameObject);
         }
     }
+
+    private void Start()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        Move();
+    }
 }
 
-public class NoteContinuous : NoteObject
+public class NoteContinuous : NoteObject, INote
 {
-    public override void Start()
+    public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+        spriteRenderer.size = new Vector2(11.65f * 2, 1);
+
 
         spriteRenderer.color = Color.cyan;
 
-        transform.localPosition += new Vector3(0, distance);
+        transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
-    public override void Update()
+    public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        if (!start)
-        {
-            start = true;
-
-            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
-        }
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
+        if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
+            spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -84,32 +92,39 @@ public class NoteContinuous : NoteObject
             Destroy(gameObject);
         }
     }
+
+    private void Start()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        Move();
+    }
 }
 
-public class NoteLongHead : NoteObject
+public class NoteLongHead : NoteObject, INote
 {
-
-    public override void Start()
+    public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
 
-        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+        spriteRenderer.size = new Vector2(11.65f * 2, 1);
 
 
-        transform.localPosition += new Vector3(0, distance);
+
+        transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
-    public override void Update()
+    public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        if (!start)
-        {
-            start = true;
-
-            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
-        }
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
+        if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
+            spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
         if (spriteRenderer.size.x <= 0)
         {
@@ -119,37 +134,48 @@ public class NoteLongHead : NoteObject
             Destroy(gameObject);
         }
     }
+
+    private void Start()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        Move();
+    }
 }
 
-public class NoteLongTail : NoteObject
+public class NoteLongTail : NoteObject, INote
 {
     LineRenderer line;
-    public override void Start()
+
+    public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f); // 나의 reachTime을 봤을때 0,0과의 거리를 잼
+        // reachTime이 0이면 값은 무조건 0임. 0,0에서 시작시킬 순 없으니 Default값으로 18.01을 더해줌. 0,0부터 시작점까지의 거리는 항상 18.01이기 때문임
 
-        spriteRenderer.size = new Vector2((distance + 18.01f) / 18.01f * 11.65f, 1);
+        // 11.65는 spriteRenderer.size의 x값 내가 보기엔 여기서 이거 설정해주는 식이 잘못됨 ㅇㅇ
+        // 그냥 11.65 * 2로 생성하고 그 위치에 왔을때부터 줄여주자. 하드코딩이여도 어쩔 수 없다.
+
+        spriteRenderer.size = new Vector2(11.65f * 2, 1);
 
 
 
-        transform.localPosition += new Vector3(0, distance);
+        transform.localPosition += new Vector3(0, distance + 18.01f);
 
-
+        StartCoroutine(Line());
     }
 
-    public override void Update()
+    public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        if (!start)
-        {
-            start = true;
-
-            DOTween.To(() => spriteRenderer.size, value => spriteRenderer.size = value, new Vector2(0, 1), (18.01f / speed) + (note.reachTime * 0.001f)).SetEase(Ease.Linear);
-            StartCoroutine(Line());
-        }
         transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
+        if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
+            spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
 
         if (spriteRenderer.size.x <= 0)
         {
@@ -158,7 +184,16 @@ public class NoteLongTail : NoteObject
             ComboManager.Instance.JudgeText("Miss");
             Destroy(gameObject);
         }
+    }
 
+    private void Start()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        Move();
     }
 
     IEnumerator Line()

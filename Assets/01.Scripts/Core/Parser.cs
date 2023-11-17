@@ -12,8 +12,7 @@ public class Parser : MonoSingleton<Parser>
         int j = 0;
         sheet = new Sheet();
         string str = null;
-        print(Directory.GetCurrentDirectory());
-        using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + @"\Assets\99.Sheets\R.txt"))
+        using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + @"\Assets\99.Sheets\" + LevelManager.Instance.levelSO.name + ".txt"))
         {
             while ((str = sr.ReadLine()) != null)
             {
