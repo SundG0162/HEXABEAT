@@ -9,7 +9,6 @@ public class Parser : MonoSingleton<Parser>
 
     public void ReadInfo()
     {
-        int j = 0;
         sheet = new Sheet();
         string str = null;
         using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + @"\Assets\99.Sheets\" + LevelManager.Instance.levelSO.name + ".txt"))
@@ -43,7 +42,6 @@ public class Parser : MonoSingleton<Parser>
                     tail = int.Parse(s[3].Trim());
                 }
                 sheet.notes.Add(new Note(line, time, (NoteType)type, tail));
-                j++;
             }
         }
         GameManager.Instance.sheet = sheet;

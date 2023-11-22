@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//9, 15.6
-//18.009997
 public enum NoteType
 {
     Short, // 짧은 노트
@@ -35,7 +33,6 @@ public class Sheet
 
     public int quaterNoteMs;
     public int firstNoteMs;
-    public int[] signature; // 박자 ex) 3/4, 4/4, 6/8
 
     public List<Note> notes = new List<Note>();
 

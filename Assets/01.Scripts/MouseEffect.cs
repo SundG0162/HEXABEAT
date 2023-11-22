@@ -10,23 +10,11 @@ public class MouseEffect : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = true;
-        //StartCoroutine(IEParticle());
+        Cursor.visible = false;
     }
     void Update()
     {
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = mousePos;
-    }
-
-    IEnumerator IEParticle()
-    {
-        WaitForSeconds wait = new WaitForSeconds(0.05f);
-        while (true)
-        {
-            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //Instantiate(_mouseParticle, mousePos, Quaternion.identity);
-            yield return wait;
-        }
     }
 }

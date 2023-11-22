@@ -1,21 +1,36 @@
-using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
+using DG.Tweening;
 
-public class SettingManager : MonoBehaviour
+public class SettingManager : MonoSingleton<SettingManager>
 {
     [SerializeField]
     Transform[] _canvases;
 
     List<RectTransform> _rects = new List<RectTransform>();
 
-    bool _isCoroutineRunning = false;
+    [SerializeField]
+    TMP_InputField _offsetInput;
+
+    [SerializeField]
+    TMP_InputField _speedInput;
+
+    float _speed = 8;
+    float _Speed
+    {
+        get => _speed; set { _speed = Mathf.Clamp((float)Math.Round(value, 1), 1, 100); }
+    }
+    int _offset = 0;
+    public bool isCoroutineRunning = false;
     bool _isSettingOn = true;
 
     int _currentSettingIndex = 1;
+
+    public KeyCode currentKey;
+    public KeyCode oppositeKey;
 
     private void Awake()
     {
@@ -23,16 +38,18 @@ public class SettingManager : MonoBehaviour
         {
             _rects.Add(_canvases[i].GetChild(0).GetComponent<RectTransform>());
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         SettingClose();
+        InitSetting();
     }
 
     private void Update()
     {
-        if (_isCoroutineRunning) return;
+        if (isCoroutineRunning) return;
         if (Input.GetKeyDown(KeyCode.K) && !_isSettingOn)
         {
             SettingOpen();
@@ -42,7 +59,130 @@ public class SettingManager : MonoBehaviour
             SettingClose();
         }
     }
-    
+
+    private void InitSetting()
+    {
+        _Speed = PlayerPrefs.GetFloat("Speed");
+        _offset = PlayerPrefs.GetInt("Offset");
+        currentKey = (KeyCode)PlayerPrefs.GetInt("CurrentKey");
+        oppositeKey = (KeyCode)PlayerPrefs.GetInt("OppositeKey");
+        SpeedChange();
+        OffsetChange();
+    }
+
+    public void SettingReset(Transform trm)
+    {
+        currentKey = KeyCode.Mouse0;
+        oppositeKey = KeyCode.Mouse1;
+        _offset = 0;
+        _Speed = 8f;
+        SpeedChange();
+        OffsetChange();
+        trm.Find("Current").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE0";
+        trm.Find("Opposite").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE1";
+        PlayerPrefs.SetFloat("Speed", _Speed);
+        PlayerPrefs.SetInt("Offset", _offset);
+        PlayerPrefs.SetInt("currentKey", (int)currentKey);
+        PlayerPrefs.SetInt("oppositeKey", (int)oppositeKey);
+    }
+
+    #region Change Setting
+    public void SpeedChange(float value = 0)
+    {
+        _Speed += value;
+        _speedInput.text = _Speed.ToString();
+        PlayerPrefs.SetFloat("Speed", _Speed);
+    }
+
+    public void OffsetChange(int value = 0)
+    {
+        _offset += value;
+        _offsetInput.text = _offset.ToString();
+        PlayerPrefs.SetInt("Offset", _offset);
+    }
+
+    public void SpeedInput()
+    {
+        float prevSpeed = _Speed;
+        try
+        {
+            _Speed = float.Parse(_speedInput.text);
+            if(_Speed <= 1)
+            {
+                _Speed = prevSpeed;
+                return;
+            }
+        }
+        catch(Exception e) 
+        {
+            _Speed = prevSpeed;
+            SpeedChange();
+        }
+    }
+
+    public void OffsetInput()
+    {
+        int prevOffset = _offset;
+        try
+        {
+            _offset = int.Parse(_offsetInput.text);
+        }
+        catch (FormatException e)
+        {
+            Debug.Log(e);
+            _offset = prevOffset;
+            SpeedChange();
+        }
+    }
+    #endregion
+
+    #region Key Setting
+    public void KeyChange(Transform trm)
+    {
+        trm.GetChild(0).GetComponent<TextMeshProUGUI>().text = "listening...";
+        StartCoroutine(ListenKey(trm));
+    }
+
+    IEnumerator ListenKey(Transform trm, bool reset = false)
+    {
+        yield return new WaitUntil(() => Input.anyKey);
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+        {
+            foreach (KeyCode k in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(k))
+                {
+                    trm.GetChild(0).GetComponent<TextMeshProUGUI>().text = k.ToString().ToUpper();
+                    if (trm.name == "Current")
+                    {
+                        currentKey = k;
+                        PlayerPrefs.SetInt("CurrentKey", (int)k);
+                    }
+                    else
+                    {
+                        oppositeKey = k;
+                        PlayerPrefs.SetInt("OppositeKey", (int)k);
+                    }
+                    yield break;
+                }
+            }
+        }
+        trm.GetChild(0).GetComponent<TextMeshProUGUI>().text = Input.inputString.ToUpper();
+        KeyCode key = (KeyCode)Enum.Parse(typeof(KeyCode), Input.inputString.ToUpper());
+        if (trm.name == "Current")
+        {
+            currentKey = key;
+            PlayerPrefs.SetInt("CurrentKey", (int)key);
+        }
+        else
+        {
+            oppositeKey = key;
+            PlayerPrefs.SetInt("OppositeKey", (int)key);
+        }
+    }
+    #endregion
+
+    #region Panel
     public void PanelChange(int index)
     {
         _canvases[_currentSettingIndex].GetComponent<Canvas>().sortingOrder = 0;
@@ -58,7 +198,7 @@ public class SettingManager : MonoBehaviour
     IEnumerator IESettingOpen()
     {
         _isSettingOn = true;
-        _isCoroutineRunning = true;
+        isCoroutineRunning = true;
         _canvases[0].gameObject.SetActive(true);
         RectTransform rect = _canvases[0].GetChild(0).GetComponent<RectTransform>();
         rect.localScale = Vector2.zero;
@@ -89,7 +229,7 @@ public class SettingManager : MonoBehaviour
             r.localScale = Vector2.zero;
             r.DOScale(Vector2.one, 0.1f);
         }
-        _isCoroutineRunning = false;
+        isCoroutineRunning = false;
     }
 
     private void SettingClose()
@@ -100,7 +240,7 @@ public class SettingManager : MonoBehaviour
     IEnumerator IESettingClose()
     {
         _isSettingOn = false;
-        _isCoroutineRunning = true;
+        isCoroutineRunning = true;
         for (int i = 1; i < _canvases.Length; i++)
         {
             _rects.Add(_canvases[i].GetChild(0).GetComponent<RectTransform>());
@@ -116,6 +256,7 @@ public class SettingManager : MonoBehaviour
         {
             c.gameObject.SetActive(false);
         }
-        _isCoroutineRunning = false;
+        isCoroutineRunning = false;
     }
+    #endregion
 }

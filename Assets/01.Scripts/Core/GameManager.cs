@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,10 +14,19 @@ public class GameManager : MonoSingleton<GameManager>
     private void Start()
     {
         Parser.Instance.ReadInfo();
+        SettingManager.Instance.isCoroutineRunning = true;
         sheet = Parser.Instance.sheet;
-        //NoteGenerate.Instance.Gen(sheet);
+        NoteGenerate.Instance.speed = PlayerPrefs.GetFloat("Speed");
+        AudioManager.Instance.offset = PlayerPrefs.GetInt("Offset");
+        StartCoroutine(IEGameStart());
     }
 
+
+    IEnumerator IEGameStart()
+    {
+        yield return new WaitForSeconds(2f);
+        GameStart();
+    }
 
     private void Update()
     {

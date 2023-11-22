@@ -17,6 +17,5 @@ public class T_UIManager : MonoBehaviour
         _inputFieldTrm.gameObject.SetActive(false);
         NoteGenerate.Instance.speed = float.Parse(str[0]);
         AudioManager.Instance.offset = int.Parse(str[1]);
-        GameManager.Instance.GameStart();
     }
 }

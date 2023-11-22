@@ -10,6 +10,7 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void Play()
     {
+        print(1);
         audioSource.clip = LevelManager.Instance.levelSO.bgm;
         audioSource.Play();
     }

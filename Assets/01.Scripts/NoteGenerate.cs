@@ -15,29 +15,6 @@ public class NoteGenerate : MonoSingleton<NoteGenerate>
 
     public bool isGenerateEnd = false;
 
-
-    private void Update()
-    {
-        /*if(Input.GetKeyDown(KeyCode.Alpha1)) D_SHORTNOTEGENERATE(0);
-        if(Input.GetKeyDown(KeyCode.Alpha2)) D_SHORTNOTEGENERATE(1);
-        if(Input.GetKeyDown(KeyCode.Alpha3)) D_SHORTNOTEGENERATE(2);
-        if(Input.GetKeyDown(KeyCode.Alpha4)) D_SHORTNOTEGENERATE(3);
-        if(Input.GetKeyDown(KeyCode.Alpha5)) D_SHORTNOTEGENERATE(4);
-        if(Input.GetKeyDown(KeyCode.Alpha6)) D_SHORTNOTEGENERATE(5);
-        if(Input.GetKeyDown(KeyCode.Q)) D_CONTINUENOTEGENERATE(0);
-        if(Input.GetKeyDown(KeyCode.W)) D_CONTINUENOTEGENERATE(1);
-        if(Input.GetKeyDown(KeyCode.E)) D_CONTINUENOTEGENERATE(2);
-        if(Input.GetKeyDown(KeyCode.R)) D_CONTINUENOTEGENERATE(3);
-        if(Input.GetKeyDown(KeyCode.T)) D_CONTINUENOTEGENERATE(4);
-        if(Input.GetKeyDown(KeyCode.Y)) D_CONTINUENOTEGENERATE(5);
-        if(Input.GetKeyDown(KeyCode.A)) D_LONGNOTEGENERATE(0);
-        if(Input.GetKeyDown(KeyCode.S)) D_LONGNOTEGENERATE(1);
-        if(Input.GetKeyDown(KeyCode.D)) D_LONGNOTEGENERATE(2);
-        if(Input.GetKeyDown(KeyCode.F)) D_LONGNOTEGENERATE(3);
-        if(Input.GetKeyDown(KeyCode.G)) D_LONGNOTEGENERATE(4);
-        if(Input.GetKeyDown(KeyCode.H)) D_LONGNOTEGENERATE(5);*/
-    }
-
     public void Gen(Sheet sheet)
     {
         StartCoroutine(IEGen(sheet));

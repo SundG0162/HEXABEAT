@@ -29,10 +29,7 @@ public class NoteShort : NoteObject, INote
         spriteRenderer = GetComponent<SpriteRenderer>();
         float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-
         spriteRenderer.size = new Vector2(11.65f * 2, 1);
-
-
         transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
@@ -41,7 +38,7 @@ public class NoteShort : NoteObject, INote
         if (!NoteGenerate.Instance.isGenerateEnd) return;
         if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
             spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
-        transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
+        transform.localPosition -= new Vector3(0, speed * Time.deltaTime, 0);
         if (spriteRenderer.size.x <= 0)
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
@@ -67,23 +64,18 @@ public class NoteContinuous : NoteObject, INote
     public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
         spriteRenderer.size = new Vector2(11.65f * 2, 1);
-
-
         spriteRenderer.color = Color.cyan;
-
         transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
     public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
         if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
             spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
-        transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
+        transform.localPosition -= new Vector3(0, speed * Time.deltaTime, 0);
         if (spriteRenderer.size.x <= 0)
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
@@ -109,23 +101,17 @@ public class NoteLongHead : NoteObject, INote
     public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        float reachTime = 18.01f / speed;
         float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
-
         spriteRenderer.size = new Vector2(11.65f * 2, 1);
-
-
-
         transform.localPosition += new Vector3(0, distance + 18.01f);
     }
 
     public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
         if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
             spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
-        transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
+        transform.localPosition -= new Vector3(0, speed * Time.deltaTime, 0);
         if (spriteRenderer.size.x <= 0)
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
@@ -153,30 +139,18 @@ public class NoteLongTail : NoteObject, INote
     public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        float reachTime = 18.01f / speed;
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f); // 나의 reachTime을 봤을때 0,0과의 거리를 잼
-        // reachTime이 0이면 값은 무조건 0임. 0,0에서 시작시킬 순 없으니 Default값으로 18.01을 더해줌. 0,0부터 시작점까지의 거리는 항상 18.01이기 때문임
-
-        // 11.65는 spriteRenderer.size의 x값 내가 보기엔 여기서 이거 설정해주는 식이 잘못됨 ㅇㅇ
-        // 그냥 11.65 * 2로 생성하고 그 위치에 왔을때부터 줄여주자. 하드코딩이여도 어쩔 수 없다.
-
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f); 
         spriteRenderer.size = new Vector2(11.65f * 2, 1);
-
-
-
         transform.localPosition += new Vector3(0, distance + 18.01f);
-
         StartCoroutine(Line());
     }
 
     public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        transform.position = Vector2.MoveTowards(transform.position, Vector2.zero, speed * Time.deltaTime);
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
         if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
             spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
-
+        transform.localPosition -= new Vector3(0, speed * Time.deltaTime, 0);
         if (spriteRenderer.size.x <= 0)
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);

@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class GameSetting : MonoBehaviour
@@ -19,7 +17,6 @@ public class GameSetting : MonoBehaviour
 
     private void Awake()
     {
-        print(_colorButtons[0].transform.Find("ColorEditor").gameObject);
         for(int i = 0;  i < _colorButtons.Length; i++)
         {
             _colorPickers.Add(_colorButtons[i].transform.Find("ColorEditor").gameObject);

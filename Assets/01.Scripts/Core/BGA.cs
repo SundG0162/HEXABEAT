@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class BGA : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    SpriteRenderer _spriteRenderer;
+
+    private void Awake()
     {
-        
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        _spriteRenderer.sprite = LevelManager.Instance.levelSO.bga;
     }
 }

@@ -69,16 +69,17 @@ public class MouseInput : MonoBehaviour
     private void LeftClick()
     {
         var spriteRenderer = _currentTarget.transform.Find("Glow").GetComponent<SpriteRenderer>();
-        if(Input.GetMouseButtonDown(0)) 
+
+        if(Input.GetKeyDown(SettingManager.Instance.currentKey)) 
         {
             Judgement.Instance.Judge(_currentIndex);
         }
-        if (Input.GetMouseButton(0))
+        if (Input.GetKey(SettingManager.Instance.currentKey))
         {
             spriteRenderer.color = Color.blue;
             Judgement.Instance.CheckContinousNote(_currentIndex);
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyUp(SettingManager.Instance.currentKey))
         {
             spriteRenderer.color = Color.white;
             Judgement.Instance.CheckLongNote(_currentIndex);
@@ -88,16 +89,16 @@ public class MouseInput : MonoBehaviour
     private void RightClick()
     {
         var spriteRenderer = _oppositeTarget.transform.Find("Glow").GetComponent<SpriteRenderer>();
-        if(Input.GetMouseButtonDown(1)) 
+        if(Input.GetKeyDown(SettingManager.Instance.oppositeKey)) 
         {
             Judgement.Instance.Judge(_oppositeIndex);
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetKey(SettingManager.Instance.oppositeKey))
         {
             spriteRenderer.color = Color.blue;
             Judgement.Instance.CheckContinousNote(_oppositeIndex);
         }
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetKeyUp(SettingManager.Instance.oppositeKey))
         {
             spriteRenderer.color = Color.white;
             Judgement.Instance.CheckLongNote(_oppositeIndex);

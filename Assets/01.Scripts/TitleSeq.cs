@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class TitleSeq : MonoBehaviour
 {
@@ -36,6 +37,10 @@ public class TitleSeq : MonoBehaviour
         {
             _titleSeq.Complete();
             WhiteFlash();
+        }
+        else if(Input.anyKeyDown)
+        {
+            SceneManager.LoadScene(1);
         }
     }
 
