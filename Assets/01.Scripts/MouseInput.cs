@@ -63,6 +63,14 @@ public class MouseInput : MonoBehaviour
             temp.transform.Find("Glow").gameObject.SetActive(false);
             temp2.transform.Find("Glow").GetComponent<SpriteRenderer>().color = Color.white;
             temp2.transform.Find("Glow").gameObject.SetActive(false);
+            if(Input.GetKey(SettingManager.Instance.currentKey))
+            {
+                Judgement.Instance.CheckLongNote(_currentIndex);
+            }
+            if (Input.GetKey(SettingManager.Instance.oppositeKey))
+            {
+                Judgement.Instance.CheckLongNote(_oppositeIndex);
+            }
         }
     }
 

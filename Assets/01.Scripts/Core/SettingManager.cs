@@ -4,11 +4,17 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
+using Unity.VisualScripting;
+using UnityEngine.Audio;
 
 public class SettingManager : MonoSingleton<SettingManager>
 {
     [SerializeField]
     Transform[] _canvases;
+
+    [SerializeField]
+    Transform _keySettingPanelTrm;
 
     List<RectTransform> _rects = new List<RectTransform>();
 
@@ -17,6 +23,13 @@ public class SettingManager : MonoSingleton<SettingManager>
 
     [SerializeField]
     TMP_InputField _speedInput;
+
+    public AudioMixer audioMixer;
+
+    Slider _masterVolumeSlider;
+    Slider _bgmVolumeSlider;
+    Slider _sfxVolumeSlider;
+
 
     float _speed = 8;
     float _Speed
@@ -38,11 +51,19 @@ public class SettingManager : MonoSingleton<SettingManager>
         {
             _rects.Add(_canvases[i].GetChild(0).GetComponent<RectTransform>());
         }
+        Transform volumeSettingPanel = _rects[0].transform.Find("SettingPanel");
+        _masterVolumeSlider = volumeSettingPanel.Find("Master").GetComponent<Slider>();
+        _bgmVolumeSlider = volumeSettingPanel.Find("BGM").GetComponent<Slider>();
+        _sfxVolumeSlider = volumeSettingPanel.Find("SFX").GetComponent<Slider>();
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
+        if(PlayerPrefs.GetInt("IsFirst") == 0)
+        {
+            SettingReset();
+        }
         SettingClose();
         InitSetting();
     }
@@ -66,11 +87,17 @@ public class SettingManager : MonoSingleton<SettingManager>
         _offset = PlayerPrefs.GetInt("Offset");
         currentKey = (KeyCode)PlayerPrefs.GetInt("CurrentKey");
         oppositeKey = (KeyCode)PlayerPrefs.GetInt("OppositeKey");
+        _masterVolumeSlider.value = PlayerPrefs.GetFloat("Master");
+        audioMixer.SetFloat("Master", _masterVolumeSlider.value);
+        _masterVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume");
+        audioMixer.SetFloat("BGM", _bgmVolumeSlider.value);
+        _masterVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume");
+        audioMixer.SetFloat("SFX", _sfxVolumeSlider.value);
         SpeedChange();
         OffsetChange();
     }
 
-    public void SettingReset(Transform trm)
+    public void SettingReset()
     {
         currentKey = KeyCode.Mouse0;
         oppositeKey = KeyCode.Mouse1;
@@ -78,12 +105,47 @@ public class SettingManager : MonoSingleton<SettingManager>
         _Speed = 8f;
         SpeedChange();
         OffsetChange();
-        trm.Find("Current").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE0";
-        trm.Find("Opposite").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE1";
+        _keySettingPanelTrm.Find("Current").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE0";
+        _keySettingPanelTrm.Find("Opposite").GetChild(0).GetComponent<TextMeshProUGUI>().text = "MOUSE1";
+        _masterVolumeSlider.value = 1;
+        audioMixer.SetFloat("Master", _masterVolumeSlider.value);
+        _masterVolumeSlider.value = 1;
+        audioMixer.SetFloat("BGM", _bgmVolumeSlider.value);
+        _masterVolumeSlider.value = 1;
+        audioMixer.SetFloat("SFX", _sfxVolumeSlider.value);
         PlayerPrefs.SetFloat("Speed", _Speed);
         PlayerPrefs.SetInt("Offset", _offset);
         PlayerPrefs.SetInt("currentKey", (int)currentKey);
         PlayerPrefs.SetInt("oppositeKey", (int)oppositeKey);
+        PlayerPrefs.SetFloat("MasterVolume", 1);
+        PlayerPrefs.SetFloat("BGMVolume", 1);
+        PlayerPrefs.SetFloat("SFXVolume", 1);
+        PlayerPrefs.SetInt("IsFirst", 1);
+    }
+
+    public void MasterControl()
+    {
+        print(_masterVolumeSlider.value);
+        float sound = _masterVolumeSlider.value;
+        if (sound <= -50) sound = -80;
+        audioMixer.SetFloat("Master", sound);
+        PlayerPrefs.SetFloat("MasterVolume", sound);
+    }
+
+    public void BGMControl()
+    {
+        float sound = _bgmVolumeSlider.value;
+        if (sound <= -50) sound = -80;
+        audioMixer.SetFloat("BGM", sound);
+        PlayerPrefs.SetFloat("BGMVolume", sound);
+    }
+
+    public void SFXControl()
+    {
+        float sound = _sfxVolumeSlider.value;
+        if (sound <= -50) sound = -80;
+        audioMixer.SetFloat("SFX", sound);
+        PlayerPrefs.SetFloat("SFXVolume", sound);
     }
 
     #region Change Setting

@@ -8,6 +8,11 @@ public class AudioManager : MonoSingleton<AudioManager>
     public AudioSource audioSource;
     public int offset = -520;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public void Play()
     {
         print(1);

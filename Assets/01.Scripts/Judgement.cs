@@ -26,24 +26,24 @@ public class Judgement : MonoSingleton<Judgement>
         }
         else if (judgeTime > 150)
         {
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
         }
         else if (judgeTime > 125)
         {
-            ComboManager.Instance.JudgeText("Bad");
+            InGameUIManager.Instance.JudgeText("Bad");
         }
         else if (judgeTime > 100)
         {
-            ComboManager.Instance.JudgeText("Good");
+            InGameUIManager.Instance.JudgeText("Good");
         }
         else if (judgeTime > 50)
         {
-            ComboManager.Instance.JudgeText("Great");
+            InGameUIManager.Instance.JudgeText("Great");
 
         }
         else if (judgeTime >= 0)
         {
-            ComboManager.Instance.JudgeText("Perfect");
+            InGameUIManager.Instance.JudgeText("Perfect");
         }
 
         GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
@@ -68,16 +68,16 @@ public class Judgement : MonoSingleton<Judgement>
         if (judgeTime > 150) return;
         if (judgeTime > 75)
         {
-            ComboManager.Instance.JudgeText("Good");
+            InGameUIManager.Instance.JudgeText("Good");
         }
         else if (judgeTime > 50)
         {
-            ComboManager.Instance.JudgeText("Great");
+            InGameUIManager.Instance.JudgeText("Great");
 
         }
         else if (judgeTime >= 0)
         {
-            ComboManager.Instance.JudgeText("Perfect");
+            InGameUIManager.Instance.JudgeText("Perfect");
         }
         GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
         NoteManager.Instance.DequeueNote(trackNum);
@@ -93,24 +93,24 @@ public class Judgement : MonoSingleton<Judgement>
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
         if (judgeTime > 150)
         {
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
         }
         else if (judgeTime > 125)
         {
-            ComboManager.Instance.JudgeText("Bad");
+            InGameUIManager.Instance.JudgeText("Bad");
         }
         else if (judgeTime > 100)
         {
-            ComboManager.Instance.JudgeText("Good");
+            InGameUIManager.Instance.JudgeText("Good");
         }
         else if (judgeTime > 50)
         {
-            ComboManager.Instance.JudgeText("Great");
+            InGameUIManager.Instance.JudgeText("Great");
 
         }
         else if (judgeTime >= 0)
         {
-            ComboManager.Instance.JudgeText("Perfect");
+            InGameUIManager.Instance.JudgeText("Perfect");
         }
         GameObject particle = Instantiate(NoteManager.Instance.particle, NoteManager.Instance.valueList[NoteManager.Instance.keyList.IndexOf(note)].transform.position, Quaternion.identity);
         NoteManager.Instance.DequeueNote(trackNum);

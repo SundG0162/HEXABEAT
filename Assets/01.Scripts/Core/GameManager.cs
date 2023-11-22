@@ -40,4 +40,5 @@ public class GameManager : MonoSingleton<GameManager>
         isGameStart = true;
         NoteGenerate.Instance.Gen(sheet);
     }
+
 }

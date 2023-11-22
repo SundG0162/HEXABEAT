@@ -43,7 +43,7 @@ public class NoteShort : NoteObject, INote
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
             NoteManager.Instance.RemoveDictionary(note);
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
             Destroy(gameObject);
         }
     }
@@ -80,7 +80,7 @@ public class NoteContinuous : NoteObject, INote
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
             NoteManager.Instance.RemoveDictionary(note);
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
             Destroy(gameObject);
         }
     }
@@ -116,7 +116,7 @@ public class NoteLongHead : NoteObject, INote
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
             NoteManager.Instance.RemoveDictionary(note);
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
             Destroy(gameObject);
         }
     }
@@ -155,7 +155,7 @@ public class NoteLongTail : NoteObject, INote
         {
             NoteManager.Instance.DequeueNote(note.lineIndex);
             NoteManager.Instance.RemoveDictionary(note);
-            ComboManager.Instance.JudgeText("Miss");
+            InGameUIManager.Instance.JudgeText("Miss");
             Destroy(gameObject);
         }
     }
