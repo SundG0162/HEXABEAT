@@ -45,5 +45,6 @@ public class Parser : MonoSingleton<Parser>
             }
         }
         GameManager.Instance.sheet = sheet;
+        print(sheet.notes.Count);
     }
 }

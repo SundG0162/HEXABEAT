@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -18,6 +19,7 @@ public class GameManager : MonoSingleton<GameManager>
         sheet = Parser.Instance.sheet;
         NoteGenerate.Instance.speed = PlayerPrefs.GetFloat("Speed");
         AudioManager.Instance.offset = PlayerPrefs.GetInt("Offset");
+        InGameUIManager.Instance.Init();
         StartCoroutine(IEGameStart());
     }
 
@@ -41,4 +43,8 @@ public class GameManager : MonoSingleton<GameManager>
         NoteGenerate.Instance.Gen(sheet);
     }
 
+    public void GameEnd()
+    {
+        InGameUIManager.Instance.GameEnd();
+    }
 }

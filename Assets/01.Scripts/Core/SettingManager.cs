@@ -169,13 +169,9 @@ public class SettingManager : MonoSingleton<SettingManager>
         try
         {
             _Speed = float.Parse(_speedInput.text);
-            if(_Speed <= 1)
-            {
-                _Speed = prevSpeed;
-                return;
-            }
+            PlayerPrefs.SetFloat("Speed", _Speed);
         }
-        catch(Exception e) 
+        catch (Exception e) 
         {
             _Speed = prevSpeed;
             SpeedChange();
@@ -188,13 +184,14 @@ public class SettingManager : MonoSingleton<SettingManager>
         try
         {
             _offset = int.Parse(_offsetInput.text);
+            PlayerPrefs.SetInt("Offset", _offset);
         }
-        catch (FormatException e)
+        catch (Exception e)
         {
-            Debug.Log(e);
             _offset = prevOffset;
             SpeedChange();
         }
+        PlayerPrefs.SetInt("Offset", _offset);
     }
     #endregion
 

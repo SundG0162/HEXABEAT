@@ -47,24 +47,26 @@ public class UIManager : MonoSingleton<UIManager>
 
     private void Start()
     {
-        Fade();
-        _levelIndex++;
+        _levelIndex = PlayerPrefs.GetInt("LevelIndex");
         _rotateIndex++;
         LevelChange(60);
     }
 
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            LevelManager.Instance.levelSO = levels[_levelIndex];
+            SceneManager.LoadScene("ResultScene");
+        }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            Fade();
             _levelIndex++;
             _rotateIndex++;
             LevelChange(60);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            Fade();
             _levelIndex--;
             _rotateIndex--;
             LevelChange(-60);
@@ -79,10 +81,12 @@ public class UIManager : MonoSingleton<UIManager>
     private void Fade()
     {
         bga[_rotateIndex].DOFade(0, 0.2f);
+        AudioManager.Instance.FadeOutMusic();
     }
 
     private void LevelChange(int angle)
     {
+        PlayerPrefs.SetInt("LevelIndex", _levelIndex);
         _currentAngle += angle;
         if (_levelIndex < 0)
         {
@@ -100,6 +104,7 @@ public class UIManager : MonoSingleton<UIManager>
         {
             _rotateIndex = 0;
         }
+        Fade();
 
         if (_rotateSeq != null && _rotateSeq.IsActive())
         {
@@ -108,7 +113,10 @@ public class UIManager : MonoSingleton<UIManager>
         _rotateSeq = DOTween.Sequence();
         _rotateSeq.AppendCallback(Rotating);
         _rotateSeq.Append(_rotatingLevel.DORotate(new Vector3(0, 0, _currentAngle), 0.5f));
-        _rotateSeq.AppendCallback(SelectedLevelInit);
+        _rotateSeq.AppendCallback(() => {
+            SelectedLevelInit();
+            AudioManager.Instance.FadeInMusic();
+        });
         _rotateSeq.Append(bga[_rotateIndex].DOFade(1, 0.2f));
     }
 
@@ -129,7 +137,7 @@ public class UIManager : MonoSingleton<UIManager>
     Sequence _fillSeq;
     public void SelectedLevelInit()
     {
-        
+        AudioManager.Instance.audioSource.clip = levels[_levelIndex].bgm;
         _name.gameObject.SetActive(true);
         _artist.gameObject.SetActive(true);
         _score.gameObject.SetActive(true);

@@ -14,29 +14,31 @@ public class Judgement : MonoSingleton<Judgement>
         //StartCoroutine(Timer());
     }
 
+    
     public void Judge(int trackNum)
     {
         if (NoteManager.Instance.notes[trackNum].Count <= 0) return;
         var note = NoteManager.Instance.notes[trackNum].Peek();
+        if (note.noteType == NoteType.LongTail) return;
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
-        if(judgeTime > 200)
+        if(judgeTime > 300)
         {
             return;
         }
-        else if (judgeTime > 150)
+        else if (judgeTime > 200)
         {
             InGameUIManager.Instance.JudgeText("Miss");
         }
-        else if (judgeTime > 125)
+        else if (judgeTime > 150)
         {
             InGameUIManager.Instance.JudgeText("Bad");
         }
-        else if (judgeTime > 100)
+        else if (judgeTime > 120)
         {
             InGameUIManager.Instance.JudgeText("Good");
         }
-        else if (judgeTime > 50)
+        else if (judgeTime > 70)
         {
             InGameUIManager.Instance.JudgeText("Great");
 
@@ -66,11 +68,11 @@ public class Judgement : MonoSingleton<Judgement>
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
         if (judgeTime > 150) return;
-        if (judgeTime > 75)
+        if (judgeTime > 120)
         {
             InGameUIManager.Instance.JudgeText("Good");
         }
-        else if (judgeTime > 50)
+        else if (judgeTime > 80)
         {
             InGameUIManager.Instance.JudgeText("Great");
 
@@ -91,19 +93,23 @@ public class Judgement : MonoSingleton<Judgement>
         var note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
         judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
-        if (judgeTime > 150)
+        if(judgeTime > 300)
+        {
+            return;
+        }
+        else if (judgeTime > 200)
         {
             InGameUIManager.Instance.JudgeText("Miss");
         }
-        else if (judgeTime > 125)
+        else if (judgeTime > 150)
         {
             InGameUIManager.Instance.JudgeText("Bad");
         }
-        else if (judgeTime > 100)
+        else if (judgeTime > 120)
         {
             InGameUIManager.Instance.JudgeText("Good");
         }
-        else if (judgeTime > 50)
+        else if (judgeTime > 70)
         {
             InGameUIManager.Instance.JudgeText("Great");
 
