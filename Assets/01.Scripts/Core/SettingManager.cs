@@ -5,8 +5,8 @@ using TMPro;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class SettingManager : MonoSingleton<SettingManager>
 {
@@ -30,6 +30,9 @@ public class SettingManager : MonoSingleton<SettingManager>
     Slider _bgmVolumeSlider;
     Slider _sfxVolumeSlider;
 
+    [SerializeField]
+    GameObject[] _cantEdit;
+
 
     float _speed = 8;
     float _Speed
@@ -38,7 +41,7 @@ public class SettingManager : MonoSingleton<SettingManager>
     }
     int _offset = 0;
     public bool isCoroutineRunning = false;
-    bool _isSettingOn = true;
+    public bool isSettingOn = true;
 
     int _currentSettingIndex = 1;
 
@@ -71,14 +74,9 @@ public class SettingManager : MonoSingleton<SettingManager>
     private void Update()
     {
         if (isCoroutineRunning) return;
-        if (Input.GetKeyDown(KeyCode.K) && !_isSettingOn)
-        {
-            SettingOpen();
-        }
-        else if (Input.GetKeyDown(KeyCode.L) && _isSettingOn)
-        {
-            SettingClose();
-        }
+        if(isSettingOn) 
+            if(Input.GetKeyDown(KeyCode.Escape))
+                SettingClose();
     }
 
     private void InitSetting()
@@ -86,6 +84,10 @@ public class SettingManager : MonoSingleton<SettingManager>
         _Speed = PlayerPrefs.GetFloat("Speed");
         _offset = PlayerPrefs.GetInt("Offset");
         currentKey = (KeyCode)PlayerPrefs.GetInt("CurrentKey");
+        KeyCode k = (KeyCode)currentKey;
+        KeyCode k2 = (KeyCode)oppositeKey;
+        _keySettingPanelTrm.transform.Find("Current/Text (TMP)").GetComponent<TextMeshProUGUI>().text = k.ToString().ToUpper();
+        _keySettingPanelTrm.transform.Find("Opposite/Text (TMP)").GetComponent<TextMeshProUGUI>().text = k2.ToString().ToUpper();
         oppositeKey = (KeyCode)PlayerPrefs.GetInt("OppositeKey");
         _masterVolumeSlider.value = PlayerPrefs.GetFloat("Master");
         audioMixer.SetFloat("Master", _masterVolumeSlider.value);
@@ -125,7 +127,6 @@ public class SettingManager : MonoSingleton<SettingManager>
 
     public void MasterControl()
     {
-        print(_masterVolumeSlider.value);
         float sound = _masterVolumeSlider.value;
         if (sound <= -50) sound = -80;
         audioMixer.SetFloat("Master", sound);
@@ -244,26 +245,37 @@ public class SettingManager : MonoSingleton<SettingManager>
     #region Panel
     public void PanelChange(int index)
     {
-        _canvases[_currentSettingIndex].GetComponent<Canvas>().sortingOrder = 0;
+        _canvases[_currentSettingIndex].GetComponent<Canvas>().sortingOrder = 2;
         _canvases[index].GetComponent<Canvas>().sortingOrder = 5;
         _currentSettingIndex = index;
     }
 
-    private void SettingOpen()
+    public void SettingOpen()
     {
         StartCoroutine(IESettingOpen());
     }
 
     IEnumerator IESettingOpen()
     {
-        _isSettingOn = true;
+        isSettingOn = true;
         isCoroutineRunning = true;
         _canvases[0].gameObject.SetActive(true);
         RectTransform rect = _canvases[0].GetChild(0).GetComponent<RectTransform>();
         rect.localScale = Vector2.zero;
-        rect.DOScale(new Vector2(1,0), 0.3f);
+        rect.DOScale(new Vector2(1,0), 0.3f).SetUpdate(true);
+        foreach (GameObject g in _cantEdit)
+        {
+            g.SetActive(false);
+        }
+        if (SceneManager.GetActiveScene().name == "SampleScene")
+        {
+            foreach (GameObject g in _cantEdit)
+            {
+                g.SetActive(true);
+            }
+        }
         yield return new WaitForSeconds(0.2f);
-        rect.DOScale(Vector2.one, 0.3f);
+        rect.DOScale(Vector2.one, 0.3f).SetUpdate(true);
         yield return new WaitForSeconds(0.2f);
         float delay = 0.05f;
         for(int i = 0; i < 5; i++)
@@ -286,30 +298,31 @@ public class SettingManager : MonoSingleton<SettingManager>
         foreach (RectTransform r in _rects)
         {
             r.localScale = Vector2.zero;
-            r.DOScale(Vector2.one, 0.1f);
+            r.DOScale(Vector2.one, 0.1f).SetUpdate(true);
         }
         isCoroutineRunning = false;
     }
 
-    private void SettingClose()
+    public void SettingClose()
     {
         StartCoroutine(IESettingClose());
     }
 
     IEnumerator IESettingClose()
     {
-        _isSettingOn = false;
+        isSettingOn = false;
         isCoroutineRunning = true;
+        
         for (int i = 1; i < _canvases.Length; i++)
         {
             _rects.Add(_canvases[i].GetChild(0).GetComponent<RectTransform>());
         }
         foreach (RectTransform r in _rects)
         {
-            r.DOScale(Vector2.zero, 0.1f);
+            r.DOScale(Vector2.zero, 0.1f).SetUpdate(true);
         }
         RectTransform rect = _canvases[0].GetChild(0).GetComponent<RectTransform>();
-        rect.DOScale(Vector2.zero, 0.3f);
+        rect.DOScale(Vector2.zero, 0.3f).SetUpdate(true);
         yield return new WaitForSeconds(0.3f);
         foreach (Transform c in _canvases)
         {

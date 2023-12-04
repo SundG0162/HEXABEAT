@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
@@ -7,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class TitleSeq : MonoBehaviour
 {
     Sequence _titleSeq;
+    Sequence _seq;
     Transform _hexagon;
     Transform _title;
 
@@ -17,6 +16,8 @@ public class TitleSeq : MonoBehaviour
         _hexagon = transform.Find("Hexagon");
         _title = _hexagon.Find("Title");
         _titleBGM = transform.Find("BGM").GetComponent<AudioSource>();
+        Screen.SetResolution(1920, 1080, true);
+        
     }
     private void Start()
     {
@@ -38,32 +39,44 @@ public class TitleSeq : MonoBehaviour
             _titleSeq.Complete();
             WhiteFlash();
         }
-        else if(Input.anyKeyDown)
+        else if (Input.anyKeyDown)
         {
             SceneManager.LoadScene(1);
         }
-    }
-
-    private void WhiteFlash()
-    {
-        _titleBGM.Play();
-        GetComponent<SpriteRenderer>().color = Color.white;
-        GetComponent<SpriteRenderer>().DOFade(0, 0.5f);
-        StartCoroutine(TitleBeat());
-    }
-
-    IEnumerator TitleBeat()
-    {
-        _titleSeq.Complete();
-        _titleSeq = DOTween.Sequence();
-        while (true)
+        if (_titleBGM.isPlaying)
         {
-            _titleSeq.Append(_hexagon.DOScale(1.3f, 0.05f));
-            _titleSeq.Join(_title.DOScale(1.3f, 0.05f));
-            _titleSeq.Append(_hexagon.DOScale(1, 0.3f));
-            _titleSeq.Join(_title.DOScale(1, 0.3f));
-            yield return new WaitForSeconds(0.5505f);
+            float db = GetAveragedVolume();
+            float value = db * 60 / 3f;
+            if (!(value > 1)) return;
+            if (value > 1.25f) value = 1.25f;
+            _seq.Kill();
+            _seq = DOTween.Sequence();
+            _seq.Append(_hexagon.DOScale(value, 0.05f));
+            _seq.Join(_title.DOScale(value, 0.05f));
+            _seq.Append(_hexagon.DOScale(1, 0.2f));
+            _seq.Join(_title.DOScale(1, 0.2f));
         }
     }
 
+    float GetAveragedVolume()
+    {
+        float[] data = new float[256];
+        float a = 0;
+        _titleBGM.GetOutputData(data, 0);
+        foreach (float s in data)
+        {
+            a += Mathf.Abs(s);
+        }
+        return a / 256;
+    }
+
+
+
+    private void WhiteFlash()
+    {
+        _seq.Complete();
+        _titleBGM.Play();
+        GetComponent<SpriteRenderer>().color = Color.white;
+        GetComponent<SpriteRenderer>().DOFade(0, 0.5f);
+    }
 }

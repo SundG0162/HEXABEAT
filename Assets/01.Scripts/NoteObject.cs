@@ -1,7 +1,7 @@
+using DG.Tweening;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
-using DG.Tweening;
 
 public abstract class NoteObject : MonoBehaviour
 {
@@ -139,8 +139,8 @@ public class NoteLongTail : NoteObject, INote
     public void Init()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        float distance = Mathf.Abs(note.reachTime * speed * 0.001f); 
-        spriteRenderer.size = new Vector2(11.65f * 2, 1);
+        float distance = Mathf.Abs(note.reachTime * speed * 0.001f);
+        spriteRenderer.size = new Vector2((distance + 18.01f * 2) / 18.01f * 11.65f, 1);
         transform.localPosition += new Vector3(0, distance + 18.01f);
         StartCoroutine(Line());
     }
@@ -148,8 +148,7 @@ public class NoteLongTail : NoteObject, INote
     public void Move()
     {
         if (!NoteGenerate.Instance.isGenerateEnd) return;
-        if (Vector2.Distance(transform.position, Vector2.zero) <= 18.01f * 2)
-            spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
+        spriteRenderer.size -= new Vector2(Time.deltaTime * 11.65f / (18.01f / speed), 0);
         transform.localPosition -= new Vector3(0, speed * Time.deltaTime, 0);
         if (spriteRenderer.size.x <= 0)
         {

@@ -45,9 +45,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Effect
-    uniqueID: 113233159
-    locked: 0
   - name: SettingPanel
     uniqueID: 3473753943
+    locked: 0
+  - name: Effect
+    uniqueID: 113233159
     locked: 0

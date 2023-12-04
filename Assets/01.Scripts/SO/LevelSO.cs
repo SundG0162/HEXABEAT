@@ -1,7 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+public enum Difficulty
+{
+    Easy,
+    Normal,
+    Hard,
+    Insane
+}
 [CreateAssetMenu(menuName = "SO/LevelSO")]
 public class LevelSO : ScriptableObject
 {
@@ -16,4 +21,5 @@ public class LevelSO : ScriptableObject
     public int[] prevJudges = new int[5];
     public AudioClip bgm;
     public Sprite bga;
+    public Difficulty difficulty;
 }

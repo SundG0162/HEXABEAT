@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class Judgement : MonoSingleton<Judgement>
@@ -8,15 +5,9 @@ public class Judgement : MonoSingleton<Judgement>
     public int currentTime = 0;
     public bool isSongStart = false;
 
-
-    private void Start()
-    {
-        //StartCoroutine(Timer());
-    }
-
-    
     public void Judge(int trackNum)
     {
+        if (ESCPanel.Instance._isPanelOn) return;
         if (NoteManager.Instance.notes[trackNum].Count <= 0) return;
         var note = NoteManager.Instance.notes[trackNum].Peek();
         if (note.noteType == NoteType.LongTail) return;
@@ -63,6 +54,7 @@ public class Judgement : MonoSingleton<Judgement>
 
     public void CheckContinousNote(int trackNum)
     {
+        if (ESCPanel.Instance._isPanelOn) return;
         if (NoteManager.Instance.notes[trackNum].Count <= 0 || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.Countinous) return;
         Note note = NoteManager.Instance.notes[trackNum].Peek();
         int judgeTime;
@@ -89,15 +81,12 @@ public class Judgement : MonoSingleton<Judgement>
 
     public void CheckLongNote(int trackNum)
     {
+        if (ESCPanel.Instance._isPanelOn) return;
+
         if (NoteManager.Instance.notes[trackNum].Count <= 0 || NoteManager.Instance.notes[trackNum].Peek().noteType != NoteType.LongTail) return;
         var note = NoteManager.Instance.notes[trackNum].Peek();
-        int judgeTime;
-        judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
+        int judgeTime = Mathf.Abs(note.reachTime - currentTime + AudioManager.Instance.offset);
         if(judgeTime > 300)
-        {
-            return;
-        }
-        else if (judgeTime > 200)
         {
             InGameUIManager.Instance.JudgeText("Miss");
         }

@@ -1,6 +1,4 @@
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Parser : MonoSingleton<Parser>
@@ -11,7 +9,9 @@ public class Parser : MonoSingleton<Parser>
     {
         sheet = new Sheet();
         string str = null;
-        using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory() + @"\Assets\99.Sheets\" + LevelManager.Instance.levelSO.name + ".txt"))
+        string sheetStr = Path.Combine(Application.persistentDataPath, LevelManager.Instance.levelSO.name + ".txt");
+        if (!File.Exists(sheetStr)) return;
+        using (StreamReader sr = new StreamReader(sheetStr))
         {
             while ((str = sr.ReadLine()) != null)
             {
@@ -22,11 +22,11 @@ public class Parser : MonoSingleton<Parser>
                     sheet.quaterNoteMs = int.Parse(str.Split()[1].Trim());
                     continue;
                 }
-                if(str.StartsWith("FirstNoteMs"))
+                if (str.StartsWith("FirstNoteMs"))
                 {
                     sheet.firstNoteMs = int.Parse(str.Split()[1].Trim());
                     continue;
-                }    
+                }
                 string[] s = str.Split(' ');
                 if (s.Length == 1)
                 {
@@ -45,6 +45,5 @@ public class Parser : MonoSingleton<Parser>
             }
         }
         GameManager.Instance.sheet = sheet;
-        print(sheet.notes.Count);
     }
 }

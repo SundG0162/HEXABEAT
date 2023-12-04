@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.Android;
 using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoSingleton<AudioManager>
@@ -33,7 +30,7 @@ public class AudioManager : MonoSingleton<AudioManager>
     public void FadeOutMusic()
     {
         audioSource.DOFade(0, 0.4f);
-        audioSource.clip = LevelManager.Instance.levelSO.bgm;
+        audioSource.clip = LevelManager.Instance.levelSO.bgm;   
     }
 
     public void FadeInMusic()
@@ -41,5 +38,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         audioSource.Play();
         audioSource.DOFade(1, 0.8f);
     }
+
+    
 
 }

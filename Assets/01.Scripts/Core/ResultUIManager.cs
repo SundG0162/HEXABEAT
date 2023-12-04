@@ -1,11 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
-using System;
-using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.SceneManagement;
 
 public class ResultUIManager : MonoBehaviour
 {
@@ -36,6 +34,7 @@ public class ResultUIManager : MonoBehaviour
     }
     private void Start()
     {
+        Cursor.visible = true;
         _title.text = LevelManager.Instance.levelSO.name;
         _artist.text = LevelManager.Instance.levelSO.artist;
         _resultSeq = DOTween.Sequence();
@@ -93,9 +92,11 @@ public class ResultUIManager : MonoBehaviour
         _resultSeq.Append(_grade.GetComponent<RectTransform>().DOScale(1,1).SetEase(Ease.InQuart));
     }
 
+    bool _isCompleted = false;
     private void Update()
     {
-        
+        if (Input.anyKeyDown && _isCompleted) SceneManager.LoadScene(1);
+        else if (Input.anyKeyDown) Complete();
     }
 
     private void Complete()
@@ -104,6 +105,7 @@ public class ResultUIManager : MonoBehaviour
         _currentScore = LevelManager.Instance.levelSO.prevScore;
         _currentCombo = LevelManager.Instance.levelSO.prevCombo;
         _fillSeq.Complete();
+        _isCompleted = true;
     }
 
     int _currentScore = 0;

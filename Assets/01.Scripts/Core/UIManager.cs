@@ -1,7 +1,5 @@
 using DG.Tweening;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,9 +27,17 @@ public class UIManager : MonoSingleton<UIManager>
     TextMeshProUGUI _artist;
     TextMeshProUGUI _score;
     TextMeshProUGUI _combo;
+    GameObject _up;
+    GameObject _down;
+    GameObject _press;
     Transform _judgeBar;
     [SerializeField]
     Image[] _bars;
+    Image _difficultyImage;
+
+    [SerializeField]
+    Color[] _difficultyColor;
+
     private void Awake()
     {
         _selectWindow = transform.Find("SelectWindow");
@@ -42,10 +48,29 @@ public class UIManager : MonoSingleton<UIManager>
         _artist = _selectWindow.Find("Artist").GetComponent<TextMeshProUGUI>();
         _score = _selectWindow.Find("Score").GetComponent<TextMeshProUGUI>();
         _combo = _selectWindow.Find("Combo").GetComponent<TextMeshProUGUI>();
+        _difficultyImage = transform.Find("Difficulty").GetComponent<Image>();
+        _up = _selectWindow.Find("Up").gameObject;
+        _down = _selectWindow.Find("Down").gameObject;
+        _press = _selectWindow.Find("Press").gameObject;
         _judgeBar = _selectWindow.Find("JudgeBar");
+
+        for(int i = 0; i < levels.Length; i++) 
+        {
+            string name = levels[i].name;
+            TextAsset sheet = Resources.Load<TextAsset>(name);
+            if(sheet != null)
+            {
+                File.WriteAllText(Path.Combine(Application.persistentDataPath, name + ".txt"), sheet.text);
+            }
+        }
     }
 
     private void Start()
+    {
+        Init();
+    }
+
+    public void Init()
     {
         _levelIndex = PlayerPrefs.GetInt("LevelIndex");
         _rotateIndex++;
@@ -54,29 +79,27 @@ public class UIManager : MonoSingleton<UIManager>
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.V))
-        {
-            LevelManager.Instance.levelSO = levels[_levelIndex];
-            SceneManager.LoadScene("ResultScene");
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) || Input.GetAxisRaw("Mouse ScrollWheel") > 0)
         {
             _levelIndex++;
             _rotateIndex++;
             LevelChange(60);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S) || Input.GetAxisRaw("Mouse ScrollWheel") < 0)
         {
             _levelIndex--;
             _rotateIndex--;
             LevelChange(-60);
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (ESCPanel.Instance._isPanelOn) return;
             LevelManager.Instance.levelSO = levels[_levelIndex];
+            AudioManager.Instance.audioSource.Stop();
+            AudioManager.Instance.audioSource.clip = LevelManager.Instance.levelSO.bgm;
             SceneManager.LoadScene("SampleScene");
         }
-        
+
     }
     private void Fade()
     {
@@ -96,16 +119,15 @@ public class UIManager : MonoSingleton<UIManager>
         {
             _levelIndex = 0;
         }
-        if(_rotateIndex < 0)
+        if (_rotateIndex < 0)
         {
             _rotateIndex = 5;
         }
-        else if(_rotateIndex >= 6)
+        else if (_rotateIndex >= 6)
         {
             _rotateIndex = 0;
         }
         Fade();
-
         if (_rotateSeq != null && _rotateSeq.IsActive())
         {
             _rotateSeq.Kill();
@@ -113,7 +135,8 @@ public class UIManager : MonoSingleton<UIManager>
         _rotateSeq = DOTween.Sequence();
         _rotateSeq.AppendCallback(Rotating);
         _rotateSeq.Append(_rotatingLevel.DORotate(new Vector3(0, 0, _currentAngle), 0.5f));
-        _rotateSeq.AppendCallback(() => {
+        _rotateSeq.AppendCallback(() =>
+        {
             SelectedLevelInit();
             AudioManager.Instance.FadeInMusic();
         });
@@ -124,26 +147,36 @@ public class UIManager : MonoSingleton<UIManager>
     {
         for (int i = 0; i < 6; i++)
         {
-            bga[i].color = Color.gray - new Color(0,0,0,1);
+            bga[i].color = Color.gray - new Color(0, 0, 0, 1);
         }
-        
+
         _name.gameObject.SetActive(false);
         _artist.gameObject.SetActive(false);
         _score.gameObject.SetActive(false);
         _combo.gameObject.SetActive(false);
         _judgeBar.gameObject.SetActive(false);
+        _difficultyImage.gameObject.SetActive(false);
+        _up.SetActive(false);
+        _down.SetActive(false);
+        _press.SetActive(false);
     }
 
     Sequence _fillSeq;
     public void SelectedLevelInit()
     {
         AudioManager.Instance.audioSource.clip = levels[_levelIndex].bgm;
+        AudioManager.Instance.audioSource.Play();
         _name.gameObject.SetActive(true);
         _artist.gameObject.SetActive(true);
         _score.gameObject.SetActive(true);
         _combo.gameObject.SetActive(true);
         _judgeBar.gameObject.SetActive(true);
+        _difficultyImage.gameObject.SetActive(true);
+        _up.SetActive(true);
+        _down.SetActive(true);
+        _press.SetActive(true);
         
+        print(1);
         bga[_rotateIndex].sprite = levels[_levelIndex].bga;
         _name.text = levels[_levelIndex].name;
         _artist.text = levels[_levelIndex].artist;
@@ -175,12 +208,39 @@ public class UIManager : MonoSingleton<UIManager>
         {
             item.fillAmount = 0;
         }
+        BarCharge();
+        switch (levels[_levelIndex].difficulty)
+        {
+            case Difficulty.Easy:
+                _difficultyImage.color = _difficultyColor[0];
+                _difficultyImage.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Easy";
+                break;
+            case Difficulty.Normal:
+                _difficultyImage.color = _difficultyColor[1];
+                _difficultyImage.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Normal";
+                break;
+            case Difficulty.Hard:
+                _difficultyImage.color = _difficultyColor[2];
+                _difficultyImage.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Hard";
+                break;
+            case Difficulty.Insane:
+                _difficultyImage.color = _difficultyColor[3];
+                _difficultyImage.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Insane";
+                break;
+        }
+        
+        
+    }
+
+
+    private void BarCharge()
+    {
         if (levels[_levelIndex].totalNote == 0) return;
         _fillSeq = DOTween.Sequence();
         float amount = 0;
         int i = 0;
         float time = 1.2f;
-        foreach(var bar in _bars) 
+        foreach (var bar in _bars)
         {
             float fill = (float)levels[_levelIndex].judges[i] / levels[_levelIndex].totalNote;
             amount += fill;
@@ -188,5 +248,6 @@ public class UIManager : MonoSingleton<UIManager>
             time += 0.2f;
             i++;
         }
+        _rotateSeq.Complete();
     }
 }

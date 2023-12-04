@@ -1,10 +1,5 @@
-using JetBrains.Annotations;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -30,13 +25,6 @@ public class GameManager : MonoSingleton<GameManager>
         GameStart();
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(0);
-        }
-    }
     public void GameStart()
     {
         isGameStart = true;
